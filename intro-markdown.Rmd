@@ -22,9 +22,12 @@ knitr::opts_chunk$set(message = FALSE)
 
 library(dplyr)
 library(ggplot2)
+library(corrplot)
 
 case = read.csv("C:\\Users\\czhan\\Downloads\\datasets_527325_1332417_Case.csv")
 patient = read.csv("C:\\Users\\czhan\\Downloads\\datasets_527325_1332417_PatientInfo (2).csv")
+heart = read.csv("C:\\Users\\czhan\\Downloads\\heart.csv")
+names(heart)[names(heart) == "ï..age"] <- "age"
 ```
 
 # Introduction
@@ -52,6 +55,18 @@ The bottom right pane is where your data visualizations will be generated. It is
 # Basics of R
 
 ## Getting started
+
+## Getting started
+
+The four most common object types in R:
+
+* Character objects represent string (text) values
+  
+* Numeric objects represent decimal or real number values
+  
+* Integer objects represent whole-number values
+  
+* Logical objects represent an argument as either TRUE or FALSE
 
 R is capable of many things, but one of its simplest functions is basic calculations. R is completely programmed to run the mathematical evaluations listed below. 
 
@@ -154,51 +169,50 @@ Run it to clear the workspace of the word1, word2, and phrase objects we created
 
 ## Importing data
 
-The first step toward manipulating data in RStudio is importing your dataset. In this tutorial, we will use data on COVID-19 infection cases in South Korea which you can download [here](https://www.kaggle.com/kimjihoo/coronavirusdataset). This page has 11 total data files but we only need two: Case.csv and PatientInfo.csv . Use the functions below to import your data. 
+The first step toward manipulating data in RStudio is importing your dataset. In this tutorial, we'll start by using data about 14 different attributes relating to heart disease which you can download [here](https://www.kaggle.com/ronitf/heart-disease-uci). Click the Download button next to the blue New Notebook button near the top of the page. This file will download as a zipped file, so make sure to extract it and save the file to your Desktop or another easily-accessible place. 
+
+Use the funcitons below to import your data.
 
 `file.choose()`
 `read.csv()`
 
-First, we’ll import data from the Case.csv file. The `file.choose()` function opens a window for you to navigate to, and select, the data you want to import. *You do not need to put anything into the parenthesis of this function for it to work*. Once you find and select the data file you want to upload, R will generate the path and file name for you. Copy everything between the quotation marks, being sure to include the marks themselves, and paste it into the parenthesis of the `read.csv()` function. Running that function loads your data into R. You want to assign your `read.csv()` function to an object using “<-” so that it’s easier to use in the rest of your script. Assign your `read.csv()` function to an object called case:
+First, we’ll import data from the heart.csv file. The `file.choose()` function opens a window for you to navigate to, and select, the data you want to import. You do not need to put anything into the parenthesis of this function for it to work. Once you find and select the data file you want to upload, R will generate the path and file name for you. Copy everything between the quotation marks, being sure to include the marks themselves, and paste it into the parenthesis of the `read.csv()` function. Running that function loads your data into R. You want to assign your `read.csv()` function to an object using “<-” so that it’s easier to use in the rest of your script. Assign your `read.csv()` function to an object called heart:
 
-```case <- read.csv(“<file path>”)```
+```heart <- read.csv(“<file path>”)```
 
 You will see a new Data entry in your “Environment” window in the upper right corner.
 
-Repeat the process with PatientInfo.csv, assigning it to an object called patient:
-
-```patient <- read.csv(“<file path”)```
-
 ## Exploring data
 
-The below functions will show more information about the newly imported data. Start by running them on `case`.
+The below functions will show more information about the newly imported data. Start by running them on `heart`.
 
 ```
-names(case)
-head(case)
-tail(case)
-dim(case)
-str(case)
+names(heart)
+head(heart)
+tail(heart)
+dim(heart)
+str(heart)
 ```
-The `names()` function will show you what each column is labeled: “case_id”, “province”, “city”, “group”, “infection_case”, “confirmed”, “latitude”, and “longitude”. Most of the column names are self-explanatory, but I’ll give a brief explanation of some that may not be as obvious. “Group” is a column of boolean values that are true if the case is from a group infection and false if the case is not from a group infection. “Infection_case” is a column of strings about where/how the patient was infected. “Confirmed” is a column of integers referring to the accumulated number of confirmed cases. `head()` and `tail()` will give you the first and last six rows of your dataset respectively. Notice that R will automatically wrap the columns to fit into your window. `dim()`, short for dimensions, will tell you the number of rows and columns in the dataset. `str()` will give you several components of your dataset, including the number of observations (rows), the number of variables (columns), and the class of your values (integer, string, character, etc.). 
 
-Run these functions on `patient` as well. The patient dataset has epidemiological data about COVID-19 patients. Epidemiological data looks at the factors that influence how a disease spreads among a population. Again, I’ll explain some of the less-obvious column names. “Infected_by” is a column with the ID of whoever infected the patient, if that information is known. “Contact_number” is a column with the number of people the patient is suspected to have made contact with while infected. You can read more about the different categories of data in Section 3 of [this page](https://www.kaggle.com/kimjihoo/ds4c-what-is-this-dataset-detailed-description). 
+The `names()` function will show you what each column is labeled. `head()` and `tail()` will give you the first and last six rows of your dataset respectively. Notice that R will automatically wrap the columns to fit into your window. `dim()`, short for dimensions, will tell you the number of rows and columns in the dataset. This dataset has 303 observations, or rows, and 14 variables, or columns. `str()` will give you several components of your dataset, including the number of observations (rows), the number of variables (columns), and the class of your values (integer, character, etc.).
 
 ## Manipulating data
 
-After the data has been uploaded you can start manipulating it. The first thing we’ll do is change the class types for some of the columns in `patient`. Run str() on `patient` and notice the class types of “contact_number”, “sympton_onset_date”, “confirmed_date” and  “released_date”. These columns are all character class types, meaning they hold string values. However, we want to change “contact_number” to a numeric type so we can do calculations with it, because we can’t do mathematical calculations with strings. For the three date-related columns, R has a specific Date class type that makes it easier to do calculations with dates as well. The Date class type has the format of year-month-day.
-
-```{r, results="hide"}
-patient$contact_number <- as.integer(as.character(patient$contact_number))
-patient$symptom_onset_date <- as.Date(patient$symptom_onset_date)
-patient$confirmed_date <- as.Date(patient$confirmed_date)
-patient$released_date <- as.Date(patient$released_date)
-```
-
-We’ll also add a new column, “days_to_rec”, which stores the number of days it took the patient to recover by subtracting “released_date” from “confirmed_date”:
-
-```
-patient$days_to_rec <- as.integer(patient$released_date - patient$confirmed_date)
+```{r}
+heart2 <- heart %>% 
+  mutate(sex = if_else(sex == 1, "MALE", "FEMALE"),
+         fbs = if_else(fbs == 1, ">120", "<=120"),
+         exang = if_else(exang == 1, "YES" ,"NO"),
+         cp = if_else(cp == 1, "ATYPICAL ANGINA",
+                      if_else(cp == 2, "NON-ANGINAL PAIN", "ASYMPTOMATIC")),
+         restecg = if_else(restecg == 0, "NORMAL",
+                           if_else(restecg == 1, "ABNORMALITY", "PROBABLE OR DEFINITE")),
+         slope = as.factor(slope),
+         ca = as.factor(ca),
+         thal = as.factor(thal),
+         target = if_else(target == 1, "YES", "NO")
+         ) %>% 
+  mutate_if(is.character, as.factor)
 ```
 
 # Packages in R
@@ -229,7 +243,7 @@ Some of the best tools for data manipulation in dplyr are the group_by() and sum
 
 `group_by(<dataset>, <variable name>)`
 
-You can go further with your sorting by using the summarize feature in addition to grouping. You will have to either nest your group_by data set inside of the summarize function, or you can use the pipe function (```$>$```).
+You can go further with your sorting by using the summarize feature in addition to grouping. You will have to either nest your group_by data set inside of the summarize function, or you can use the pipe function (```%>%```).
 
 The summarize() function can calculate totals, or statistical figures from your raw or sorted data. Below is the format for summarizing a grouped data set. 
 
@@ -237,14 +251,14 @@ The summarize() function can calculate totals, or statistical figures from your 
 
 *This is where you would put your grouped data. You can put the full group_by() function here, or save your group_by function to an object that you enter here.
 
-This function can be slightly confusing, so to add some clarity we will apply it to our patient dataset. We want to group the data by age, and then find the mean and standard deviation of the contact number for each age group.   
+This function can be slightly confusing, so to add some clarity we will apply it to our heart data We want to group the data by sex, and then find the mean resting blood pressure for each sex:
 
+```{r}
+heart2 %>%
+group_by(sex) %>%
+summarize(mean_bp = mean(trestbps))
 ```
-patient %>%
-group_by(age) %>%
-summarize(mean_contact = mean(contact_number, na.rm = TRUE))
-```
-This code will first sort the data by age, then calculate the mean of those groups from the values in the “contact_number” column, which logs the number of people the patient has made contact with while infected. Afterward, you should have a summary giving you the mean contact number for each age group. This code is an example of piping and nesting functions. In the first two lines, we use the piping operator %>% to say “Start with the patient dataset, then group by age”. In the last line, we nest mean() as a parameter of summarize().
+Here, we sort the data by sex, then calculate the mean of those groups from the values in the “trestbps” column, which logs the resting blood pressure. This code is an example of piping and nesting functions. In the first two lines, we use the piping operator %>% to say “Start with the patient dataset, then group by age”. In the last line, we nest mean() as a parameter of summarize().
 
 ## GGplot2
 
@@ -283,7 +297,157 @@ You follow the above base line of script with whichever type of plot you want to
   
 * facet_grid(variable 1 ~ variable 2) can also be added to the graph to perform the same function as facet_wrap, but with multiple variables. It will leave you with a grid of graphs sorted according to the two chosen variables.
 
+### Scatter plot
+
+Purpose: relationship between numerical values
+
+Question: What is the relationship between age and resting blood pressure?
+
+This graph has a trend line calculated using the `lm` method, which creates a linear fit. You can learn more about the different methods of calculating trend lines in the See also and Example sections of [this page](https://ggplot2.tidyverse.org/reference/geom_smooth.html).
+
+```{r}
+ggplot(heart2, aes(x=age, y=trestbps)) + 
+  geom_point() +
+  geom_smooth(method = "lm") + # add trend line
+  xlab("Age") +
+  ylab("Resting BP") +
+  ggtitle("Age and Resting Blood Pressure") 
+```
+
+Conclusion: there is a positive correlation between age and resting BP. The blue line represents the line of best fit, and the gray margins around the line represent the 95% confidence interval.
+
+### Bubble plot
+
+Purpose: represent frequency of categories
+
+Question: How many people experience chest pain?
+
+```{r}
+h <- heart2 %>% # create a copy of heart called h
+  group_by(cp) %>% # group h by chest pain categories
+  summarize(n = n()) # get counts for each category
+
+ggplot(h, aes(x=cp, y=n, size = n)) +
+    geom_point() +
+    scale_size(range = c(5, 20), name=("count")) +
+    xlab("Chest pain type") +
+    ylab("Count") +
+    ggtitle("Chest pain frequency") 
+
+```
+
+Conclusion: about 150 people are asymptomatic and don't experience chest pain. About 75 people experience pain that isn't due to angina, and about 50 people experience pain due to angina. 
+
+### Bar chart
+
+Purpose: quantitative representation of values
+
+Question: What is the distribution of ages in this data?
+
+```{r}
+h <- heart2 %>%
+  group_by(age) %>%
+  summarize(n = n())
+ggplot(h, aes(x=age, y=n, size = n)) +
+    geom_bar(stat="identity", show.legend = FALSE) +
+    xlab("Age") +
+    ylab("Count") +
+    ggtitle("Age distribution") 
+
+```
+
+Conclusion: most people represented in this data are middle-aged.
+
+### Histogram
+
+Purpose: quantitative representation of values
+
+Question: What is the distribution of maximum heart rates?
+
+```{r}
+ggplot(data = heart2, aes(x = thalach)) +
+  geom_histogram() +
+    xlab("Maximum heart rate") +
+    ylab("Count") +
+    ggtitle("Maximum heart rates") 
+
+
+```
+
+Conclusion: the most common maximum heart rates are between 150 and 175 bpm.
+
+### Density curve
+
+Question: What is the distribution of cholesterol levels?
+
+```{r}
+ggplot(data = heart2, aes(x = chol)) +
+  geom_density() +
+    xlab("Cholesterol level") +
+    ylab("Count") +
+    ggtitle("Cholesterol levels") 
+
+```
+
+Conclusion: the most frequently occurring cholesterol levels are between 215 and 250.
+
+## Correlation heatmaps with corrplot
+
+Datasets often have many different variables, and when first exploring a dataset it can be hard to tell which variables have correlations with each other. The corrplot package lets us create graphics of correlation matrices, which show correlation coefficients between variables. By looking at these graphics, we can easily notice patterns in the data. We'll use the corrplot package, so make sure you run the following:
+
+```
+install.packages("corrplot")
+library(corrplot)
+```
+
+cor() is a function that takes a Data object as a parameter and calculates the correlation coefficients between each variable. Correlation coefficients range from -1 to 1. Since correlations can be positive and negative, coefficients with absolute values closer to 1 indicate a higher correlation.
+
+```{r output="hide"}
+cor_heart <- cor(heart)
+cor_heart
+
+corrplot(cor_heart, tl.col= "black", method = "color", type="upper")
+```
+
 # Application
+
+## Introduction
+
+For this application, we'll use data on COVID-19 infection cases in South Korea which you can download [here](https://www.kaggle.com/kimjihoo/coronavirusdataset). This page has 11 total data files but we only need two: Case.csv and PatientInfo.csv . 
+
+Using file.choose() and read.csv(), assign the data in Case.csv to an object called case and the data in PatientInfo.csv to an object called patient.
+
+```
+case <- read.csv(“<file path>”)
+patient <- read.csv(“<file path>”)
+```
+
+## Exploration
+
+```
+names(heart)
+head(heart)
+tail(heart)
+dim(heart)
+str(heart)
+```
+
+## Manipulation
+
+The first thing we’ll do is change the class types for some of the columns in `patient`. Remember that the class types of “contact_number”, “symptom_onset_date”, “confirmed_date” and  “released_date”. These columns are all character class types, meaning they hold string values. However, we want to change “contact_number” to a numeric type so we can do calculations with it, because we can’t do mathematical calculations with strings. For the three date-related columns, R has a specific Date class type that makes it easier to do calculations with dates as well. The Date class type has the format of year-month-day.
+
+```{r, results="hide"}
+patient$contact_number <- as.integer(as.character(patient$contact_number))
+patient$symptom_onset_date <- as.Date(patient$symptom_onset_date)
+patient$confirmed_date <- as.Date(patient$confirmed_date)
+patient$released_date <- as.Date(patient$released_date)
+```
+
+We’ll also add a new column, “days_to_rec”, which stores the number of days it took the patient to recover by subtracting “released_date” from “confirmed_date”:
+
+```
+patient$days_to_rec <- as.integer(patient$released_date - patient$confirmed_date)
+```
 
 ## How are patients distributed across provinces?
 
