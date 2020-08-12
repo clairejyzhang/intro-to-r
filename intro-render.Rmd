@@ -1,0 +1,321 @@
+---
+title: "Intro to R"
+author: "Claire Zhang"
+output:
+  html_document:
+    toc: true
+    toc_depth: 3
+    number_sections: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(warnings = FALSE)
+knitr::opts_chunk$set(message = FALSE)
+
+library(dplyr)
+library(ggplot2)
+
+case = read.csv("C:\\Users\\czhan\\Downloads\\datasets_527325_1332417_Case.csv")
+patient = read.csv("C:\\Users\\czhan\\Downloads\\datasets_527325_1332417_PatientInfo (2).csv")
+```
+
+# Introduction
+
+## Installing R and RStudio
+
+To use R you have to first download the program. It’s completely free and can be downloaded [here](https://cloud.r-project.org/). Choose whichever download works for your device. Clicking on one of these links will start the download of R. 
+
+Congrats! Now you should have R installed onto your computer. However, most of the work you do with R should mainly be done from RStudio which can be downloaded [here](https://www.rstudio.com/products/rstudio/download/). The free version of RStudio will be sufficient for the material covered in this tutorial. 
+
+Once you have both R and RStudio downloaded, you’re ready to begin writing code. You can start by opening RStudio. You don’t need to open R itself as RStudio will automatically be able to access it.  
+
+## Becoming Familiar with RStudio
+
+RStudio has four major panes for you to work with. 
+
+The top left hand pane is the most used section of Rstudio. This is where you can freely type your script for R to run. Here you can move around your script to make edits. Working in this pane allows you to build the entire script and then run it all at once as opposed to in bits. When you are ready, you can run your entire script by hitting the “run” button on the top right-hand corner of this pane. You can also run single lines of code by putting your cursor on the line and hitting “ctrl+enter.” If you need to run only a few lines of your script together, highlight them, and press “ctrl+enter” You can save your script, or open older scripts in this pane with the buttons in the top left.
+
+Below your script editor pane is where R reads your instructions. If you find a need to run something directly through R, you can also enter commands in this screen. It will also show you the results of anything run through R from your script editor. 
+
+The pane in the top right keeps track of your uploaded datasets and stored variables. You can also view your script history in the history tab. 
+
+The bottom right pane is where your data visualizations will be generated. It is also where you can save an export any visualizations you may create. This is where you can download packages as well. We will go over using packages later, but first we will go over some of R’s primary functions.
+
+# Basics of R
+
+## Getting started
+
+R is capable of many things, but one of its simplest functions is basic calculations. R is completely programmed to run the mathematical evaluations listed below. 
+
+```
+2 * 4 # multiplication
+18 / 3 # division
+1 + 1 # addition
+11.75 - 4.812 # subtraction
+10^2 # exponents
+log(1) # natural logarithm
+log10(100) # logarithm
+sin(2*pi) # trigonometry
+x <- seq(1, 10, .5) # vector assignment
+y <- seq(101, 110, .5) # vector assignment
+x + y # vector addition
+```
+
+Everything in this section is fairly intuitive but there are a few important things to note. The first is that typing the function “log(x)” will not calculate a log base 10. R assumes that if you don’t specify a numeric base, that it should calculate the natural log, or log base e. R also calculates trigonometric function in radians unless otherwise specified. R already has numbers like pi and e pre-programmed into it. To use them you can just type their names. 
+
+On top of simple calculations, R has several built-in functions. To call these built-in functions, use the following syntax of the function name followed by its parameters enclosed in parentheses:
+
+`<function name>(<parameter 1>, <parameter 2>, etc...)`
+
+For example, R can create graphs using the `curve()` function below. Take a look at the code below. What is the function name? What are its parameters?
+
+`curve(equation, from= <lower x limit>, to= <upper x limit>, n= <number of evenly spaced points in domain>, xlab= <x axis labels>, ylab= <y axis labels>, col= <color of graph>`
+
+Curve() accepts many parameters. The first parameter you enter is your equation. When entering your equation, make sure not to include the y = portion. After that you set the “to=” and “from=” parameters, which correspond to the domain minimum and maximum values. After that you set an n value parameter that will determine the number of evenly spaced points that will be graphed between your domain values. The next parameters, “xlab=” and “ylab=”, determine the labels of your graph’s axes. You can further add “col=” to change the graph color. For a list of colors and palettes programmed into R, click [here](http://www.sthda.com/english/wiki/colors-in-r)
+
+Look at the following code and predict what kind of graph you will see:
+
+```
+curve(sin, -2*pi, 2*pi, col="blue")
+```
+
+Run the code. How close was your prediction? Notice that even though you didn’t set xlab and ylab functions, the graph still labelled the x-axis as “x” and the y-axis as “sin(x)”. Curve() has defaults for most of its parameters. In this case, it automatically set the x-axis label to ‘x’, the default variable name, and it set the y-axis label to the equation, sin(x). However, most of the time you will find that it’s helpful to set your own parameters. For example, if you just run `curve(sin)`, the resulting graph has such a narrow range that it almost looks like a straight line. So, you would need to set a domain and range so that you can get a better snapshot of the graph.
+
+## Functions in R
+
+Before you start writing any script, there are a few useful notes to be aware of.
+
+Whenever you execute a function that is going to give you a number, or data set that you are going to want to reference later, assign it to an object using the format below:
+
+`<object name> <- <function>`
+
+You can assign variables using the same format:
+
+`<object name> <- <values to be assigned>`
+
+Assign the string “Hello” to a string object called word1, and assign the string “World” to a string object called word2:
+
+```
+word1 <- “Hello”
+word2 <- “World”
+```
+Now, use a built-in function called paste() to concatenate, or join, the two strings. Assign this concatenation to a string object called phrase. Take a look at the code below. What are its parameters?
+
+```
+phrase <- paste(word1, word2, sep = " ")
+```
+In this line, we set three parameters of the paste() function: the first string object to be concatenated, the second string object to be concatenated, and a parameter called ‘sep’ or ‘separator’ which inserts a space in between the two. Let’s call another built-in function called print() on this new phrase object:
+
+```
+print(phrase)
+```
+You should also know that if you need to execute a function inside of another function, you have two options. The first is to “nest” the functions by putting your function inside of the other function’s parentheses. Run the following:
+
+```
+round(sqrt(10), 3)
+```
+Here, we nested two built-in functions: round() and sqrt(). You can probably guess what round() and sqrt(). Round() rounds a number to a specific amount of decimal places, in this case 3, and sqrt() calculates the square root. So in this code, the computer first calculated the square root of 10, then rounded that result to 3 decimal places. If you ever come across a built-in function you don’t know, you can look it up in the R Documentation. Note that you don’t need to include the parenthesis:
+
+`?<function name>`
+
+Try looking up either round() or sqrt() in the R Documentation. What does it tell you?
+
+```
+?round
+?sqrt
+```
+You can also “pipe” functions using something called the pipe operator:
+
+`%>%`
+
+The pipe operator gets the output of one statement and makes it the input for the next statement. You can think of it like the word “then”. Try reading the following code out loud:
+
+```10 %>% sqrt %>% round(3)```
+
+“Start with 10, then calculate the square root, then round to 3 decimal places.”
+
+With those functions in mind, let’s look at some data. 
+
+# Data analysis with R
+
+The code below will clear R’s brain or workspace of any stored information left over from previous coding sessions. It’s a good idea to put this at the beginning of all your scripts. 
+
+```rm(list = ls())```
+
+Run it to clear the workspace of the word1, word2, and phrase objects we created earlier.
+
+## Importing data
+
+The first step toward manipulating data in RStudio is importing your dataset. In this tutorial, we will use data on COVID-19 infection cases in South Korea which you can download [here](https://www.kaggle.com/kimjihoo/coronavirusdataset). This page has 11 total data files but we only need two: Case.csv and PatientInfo.csv . Use the functions below to import your data. 
+
+`file.choose()`
+`read.csv()`
+
+First, we’ll import data from the Case.csv file. The `file.choose()` function opens a window for you to navigate to, and select, the data you want to import. *You do not need to put anything into the parenthesis of this function for it to work*. Once you find and select the data file you want to upload, R will generate the path and file name for you. Copy everything between the quotation marks, being sure to include the marks themselves, and paste it into the parenthesis of the `read.csv()` function. Running that function loads your data into R. You want to assign your `read.csv()` function to an object using “<-” so that it’s easier to use in the rest of your script. Assign your `read.csv()` function to an object called case:
+
+```case <- read.csv(“<file path>”)```
+
+You will see a new Data entry in your “Environment” window in the upper right corner.
+
+Repeat the process with PatientInfo.csv, assigning it to an object called patient:
+
+```patient <- read.csv(“<file path”)```
+
+## Exploring data
+
+The below functions will show more information about the newly imported data. Start by running them on `case`.
+
+```
+names(case)
+head(case)
+tail(case)
+dim(case)
+str(case)
+```
+The `names()` function will show you what each column is labeled: “case_id”, “province”, “city”, “group”, “infection_case”, “confirmed”, “latitude”, and “longitude”. Most of the column names are self-explanatory, but I’ll give a brief explanation of some that may not be as obvious. “Group” is a column of boolean values that are true if the case is from a group infection and false if the case is not from a group infection. “Infection_case” is a column of strings about where/how the patient was infected. “Confirmed” is a column of integers referring to the accumulated number of confirmed cases. `head()` and `tail()` will give you the first and last six rows of your dataset respectively. Notice that R will automatically wrap the columns to fit into your window. `dim()`, short for dimensions, will tell you the number of rows and columns in the dataset. `str()` will give you several components of your dataset, including the number of observations (rows), the number of variables (columns), and the class of your values (integer, string, character, etc.). 
+
+Run these functions on `patient` as well. The patient dataset has epidemiological data about COVID-19 patients. Epidemiological data looks at the factors that influence how a disease spreads among a population. Again, I’ll explain some of the less-obvious column names. “Infected_by” is a column with the ID of whoever infected the patient, if that information is known. “Contact_number” is a column with the number of people the patient is suspected to have made contact with while infected. You can read more about the different categories of data in Section 3 of [this page](https://www.kaggle.com/kimjihoo/ds4c-what-is-this-dataset-detailed-description). 
+
+## Manipulating data
+
+After the data has been uploaded you can start manipulating it. The first thing we’ll do is change the class types for some of the columns in `patient`. Run str() on `patient` and notice the class types of “contact_number”, “sympton_onset_date”, “confirmed_date” and  “released_date”. These columns are all character class types, meaning they hold string values. However, we want to change “contact_number” to a numeric type so we can do calculations with it, because we can’t do mathematical calculations with strings. For the three date-related columns, R has a specific Date class type that makes it easier to do calculations with dates as well. The Date class type has the format of year-month-day.
+
+```{r, results="hide"}
+patient$contact_number <- as.integer(as.character(patient$contact_number))
+patient$symptom_onset_date <- as.Date(patient$symptom_onset_date)
+patient$confirmed_date <- as.Date(patient$confirmed_date)
+patient$released_date <- as.Date(patient$released_date)
+```
+
+We’ll also add a new column, “days_to_rec”, which stores the number of days it took the patient to recover by subtracting “released_date” from “confirmed_date”:
+
+```
+patient$days_to_rec <- as.integer(patient$released_date - patient$confirmed_date)
+```
+
+# Packages in R
+
+Packages are collections of specific functions in a well defined format. They make R very simple to use, and can be easily downloaded into RStudio. To download a package, click on the “Packages” tab in the lower right hand pane of RStudio. Then click “install.” A window will appear with a space for you to type the package name. Begin typing in the name of whichever package you need, and R will auto fill with available packages. Once your package is located, and selected, you can click install.
+
+Installing a package will not let you use it immediately. To employ the package, you must run the library function below every time you open your project. 
+
+`library(<package name>)`
+
+Running this function applies the desired package to the entirety of your script. It is best to open whatever packages will be necessary at the beginning of your scripts. 
+
+## Dplyr
+
+Now we will go over some of the basics of the dplyr package. To use dplyr you will also need to install Rtools, a set of software that assists with building packages. Install Rtools by running the following in your Console window:
+
+```
+install.Rtools(choose_version = TRUE, check = FALSE, GUI = TRUE,
+  page_with_download_url = "https://cran.r-project.org/bin/windows/Rtools/",
+  ...)
+```
+
+Then, install and use dplyr by following the procedure explained above. Don’t forget to run ```library(dplyr)```.
+
+Dplyr is a package that aids you in data analysis and manipulation. We will go over some of its features, but for more information on what dplyr can do, you can read this [cheat sheet](https://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf). 
+
+Some of the best tools for data manipulation in dplyr are the group_by() and summarize() functions. To use group_by, first enter the data set, and what variable you want the data grouped by. This will sort the data by whatever variable you identified.
+
+`group_by(<dataset>, <variable name>)`
+
+You can go further with your sorting by using the summarize feature in addition to grouping. You will have to either nest your group_by data set inside of the summarize function, or you can use the pipe function (```$>$```).
+
+The summarize() function can calculate totals, or statistical figures from your raw or sorted data. Below is the format for summarizing a grouped data set. 
+
+`summarize(<data set>, <name of your desired value> = <function of one of the original variables>)`
+
+*This is where you would put your grouped data. You can put the full group_by() function here, or save your group_by function to an object that you enter here.
+
+This function can be slightly confusing, so to add some clarity we will apply it to our patient dataset. We want to group the data by age, and then find the mean and standard deviation of the contact number for each age group.   
+
+```
+patient %>%
+group_by(age) %>%
+summarize(mean_contact = mean(contact_number, na.rm = TRUE))
+```
+This code will first sort the data by age, then calculate the mean of those groups from the values in the “contact_number” column, which logs the number of people the patient has made contact with while infected. Afterward, you should have a summary giving you the mean contact number for each age group. This code is an example of piping and nesting functions. In the first two lines, we use the piping operator %>% to say “Start with the patient dataset, then group by age”. In the last line, we nest mean() as a parameter of summarize().
+
+## GGplot2
+
+For graphing our data, we will want to install another package called ggplot2. Install and run ggplot2 by inputting the following in your Console window: 
+
+```
+install.packages("ggplot2")
+library(ggplot2)
+```
+
+Below is the base function of graph generation in ggplot2. In this function you identify the data set as well as what variables will be used for your axes. 
+
+`ggplot(data = <dataset name>, aes(x = <x axis variable>, y = <y axis variable>))`
++
+`geom_<chart type>`
++
+`additional modifications`
+
+You follow the above base line of script with whichever type of plot you want to make. Below are the functions you can use to fill in <chart type> and create specific types of plots. 
+
+* geom_point()  wil make a scatter plot
+  + You can add “alpha = x” into the parenthesis to determine the transparency of your data points
+  + You can also add “color =” to alter the color of your points. You can enter a color name in quotations to make all of the data points that color, or you can enter a variable to it and R will color code the points by subcategories inside that variable. 
+  + Size of the points can be changed with the parameter "size= "
+  
+* geom_boxplot () will make a box plot 
+  + You can add geom_jitter() to layer the individual data points onto the boxplot. Use the “alpha =” or “color =” explained in the geom_point() section to alter the points transparency and color in the box plot. 
+  
+* geom_bar() will make a bar graph
+  + In the parenthesis, putting stat = ‘identity’ will tell R not to calculate anything from the data, and position = ‘dodge’ will put sorted groups side by side as opposed to stacked.
+  
+* geom_line() will make line trends or other linear style graphs.
+  + You can add the “color =” function to aes() in the ggplot line to color code the subcategories of a variable
+  + You can alternatively add “group =” to subcategorize without color. 
+  + You can add facet_wrap(~ variable) to your linear graph to create side by side graphs where each graph shows a subcategory of whatever variable you selected. 
+  
+* facet_grid(variable 1 ~ variable 2) can also be added to the graph to perform the same function as facet_wrap, but with multiple variables. It will leave you with a grid of graphs sorted according to the two chosen variables.
+
+# Application
+
+## How are patients distributed across provinces?
+
+```{r}
+table_province <- as.data.frame(table(patient$province))
+names(table_province) <- c("city", "count")
+ggplot(table_province, aes(reorder(city, +count),count))+
+  geom_bar(stat='identity')+
+  coord_flip()+
+  labs(title="patients per province",x="province",y="patients")+
+  geom_text(aes(label=count,y=count+75))
+```
+
+## How are isolated and released patients distributed across provinces?
+
+```{r, results="hide"}
+chart_status <- patient %>%
+  group_by(province, state) %>%
+  filter(province != "") %>% 
+  filter(state != "") %>%
+  summarise(Count = n())
+ggplot(chart_status, aes(province, state))+
+  geom_tile(aes(fill = Count))+
+  coord_flip()+
+  labs(title="patient status per province")+
+  scale_y_discrete(limit = c("isolated","released"))
+```
+
+## What are the most common reasons people get infected? 
+
+```{r, results="hide", fig.height=6.5}
+table_reason <- as.data.frame(table(patient$infection_case))
+names(table_reason) <- c("reason", "count")
+filter(table_reason, reason!="")
+table_reason <- arrange(table_reason, desc(count))
+table_reason <- slice(table_reason, 1:20)
+ggplot(table_reason, aes(reorder(reason,+count),count))+
+  geom_bar(stat = "identity")+
+  coord_flip()+
+  labs(title = "top 20 reasons for infection", y = "people infected", x = "reason/location of infection")+
+  geom_text(aes(label = count, y = count+75))
+```
