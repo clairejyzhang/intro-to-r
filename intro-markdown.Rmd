@@ -1,5 +1,6 @@
 ---
 title: "Intro to R"
+theme: cayman
 
 knit: (function(input_file, encoding) {
   out_dir <- 'docs';
@@ -11,12 +12,13 @@ author: "Claire Zhang"
 output:
   html_document:
     toc: true
+    toc_float: true
     toc_depth: 3
     number_sections: true
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo=FALSE, warning=FALSE, message=FALSE)
+knitr::opts_chunk$set(warning=FALSE, message=FALSE)
 
 library(dplyr)
 library(ggplot2)
@@ -501,4 +503,12 @@ autoplot(pca, data = heart, colour = 'target')
 ```
 
 We can see that this graph has two clusters- one cluster of people with heart disease and one cluster of people without.
+
+# References
+
+Beckerman, Andrew P., Childs, Dylan Z., Petchey, Owen L. (2017) Getting Started with R: An Introduction for Biologists. Oxford, England: Oxford University Press.
+
+Jolliffe IT, Cadima J. Principal component analysis: a review and recent developments. 2016;374(2065).
+
+UCI machine learning repository: Heart disease data set. Uci.edu. https://archive.ics.uci.edu/ml/datasets/Heart+Disease
 
