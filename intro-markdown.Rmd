@@ -12,8 +12,7 @@ author: "Claire Zhang"
 output:
   html_document:
     toc: true
-    toc_float: true
-    toc_depth: 3
+    toc_depth: 4
     number_sections: true
 ---
 
@@ -100,7 +99,8 @@ On top of simple calculations, R has several built-in functions. To call these b
 
 For example, R can create graphs using the `curve()` function below. Take a look at the code below. What is the function name? What are its parameters?
 
-```curve(equation, from= <lower x limit>, to= <upper x limit>, n= <number of evenly spaced points in domain>, xlab= <x axis labels>, ylab= <y axis labels>, col= <color of graph>```
+```curve(equation, from= <lower x limit>, to= <upper x limit>, n= <number of evenly spaced points in domain>, 
+xlab= <x axis labels>, ylab= <y axis labels>, col= <color of graph>```
 
 `curve()` accepts many parameters. The first parameter you enter is your equation. When entering your equation, make sure not to include the y= portion. After that you set the `to=` and `from=` parameters, which correspond to the domain minimum and maximum values. After that you set an n value parameter that determines the number of evenly spaced points that will be graphed between your domain values. The next parameters, `xlab=` and `ylab=`, determine the labels of your graph’s axes. You can further add `col=` to change the graph color. For a list of colors and palettes programmed into R, click [here](http://www.sthda.com/english/wiki/colors-in-r)
 
