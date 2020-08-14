@@ -1,0 +1,561 @@
+---
+title: "Intro to R"
+theme: cayman
+
+knit: (function(input_file, encoding) {
+  out_dir <- 'docs';
+  rmarkdown::render(input_file,
+ encoding=encoding,
+ output_file=file.path(dirname(input_file), out_dir, 'index.html'))})
+
+author: "Claire Zhang"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 3
+    number_sections: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(warning=FALSE, message=FALSE)
+
+library(dplyr)
+library(ggplot2)
+library(corrplot)
+library(FactoMineR)
+library(factoextra)
+library(ggfortify)
+
+case = read.csv("C:\\Users\\czhan\\Downloads\\datasets_527325_1332417_Case.csv")
+patient = read.csv("C:\\Users\\czhan\\Downloads\\datasets_527325_1332417_PatientInfo (2).csv")
+heart = read.csv("C:\\Users\\czhan\\Downloads\\heart.csv")
+names(heart)[names(heart) == "ï..age"] <- "age"
+```
+
+# Introduction
+
+## Installing R and RStudio
+
+R is a programming language with strong statistical computing, data analysis, and graphic generation abilities. It’s completely free and can be downloaded [here](https://cloud.r-project.org/). Choose whichever download works for your device. Clicking on one of these links will start the download of R. 
+
+Congrats! Now you should have R installed onto your computer. However, most of the work you do with R should mainly be done from RStudio which can be downloaded [here](https://www.rstudio.com/products/rstudio/download/). The free version of RStudio will be sufficient for the material covered in this tutorial. 
+
+Once you have both R and RStudio downloaded, you’re ready to begin writing code. You can start by opening RStudio. You don’t need to open R itself as RStudio will automatically be able to access it.  
+
+## Becoming Familiar with RStudio
+
+RStudio has four major panes for you to work with. 
+
+The top left hand pane is the most used section of RStudio. This is where you can freely type your script for R to run. Here you can move around your script to make edits. Working in this pane allows you to build the entire script and then run it all at once as opposed to in bits. When you are ready, you can run your entire script by hitting the “run” button on the top right-hand corner of this pane. You can also run single lines of code by putting your cursor on the line and hitting “ctrl+enter.” If you need to run only a few lines of your script together, highlight them, and press “ctrl+enter” You can save your script, or open older scripts in this pane with the buttons in the top left.
+
+Below your script editor pane is where R reads your instructions. If you find a need to run something directly through R, you can also enter commands in this screen. It will also show you the results of anything run through R from your script editor. 
+
+The pane in the top right keeps track of your uploaded datasets and stored variables. You can also view your script history in the history tab. 
+
+The bottom right pane is where your data visualizations will be generated. It is also where you can save and export any visualizations you may create. This is where you can download packages as well. We will go over using packages later, but first we will go over some of R’s primary functions.
+
+# Basics of R
+
+## Getting started
+
+The four most common object types in R:
+
+* Character objects represent string (text) values
+  - Colors: red, orange, yellow
+  - Types of bread: white, wheat, sourdough
+  - Protein classes: structural, transport, enzymes
+  
+* Numeric objects represent decimal or real number values
+  - Height: 67.5 inches
+  - Ratio: the ratio of people who don't like cilantro is 15 in 100 = 0.15)
+  
+* Integer objects represent whole-number values
+  - Age: 80 years old
+  - Population of Seattle: 3,433,000
+  
+* Logical objects represent an argument as either TRUE or FALSE
+
+R is capable of many things, but one of its simplest functions is basic calculations. R is completely programmed to run the mathematical evaluations listed below. 
+
+```
+2 * 4 # multiplication
+18 / 3 # division
+1 + 1 # addition
+11.75 - 4.812 # subtraction
+10^2 # exponents
+log(1) # natural logarithm
+log10(100) # logarithm
+sin(2*pi) # trigonometry
+x <- seq(1, 10, .5) # vector assignment
+y <- seq(101, 110, .5) # vector assignment
+x + y # vector addition
+```
+
+Everything in this section is fairly intuitive but there are a few important things to note. Firstly, typing the function `log(x)` will not calculate a log base 10. R assumes that if you don’t specify a numeric base, that it should calculate the natural log, or log base e. R also calculates trigonometric function in radians unless otherwise specified. R already has numbers like pi and e pre-programmed into it. To use them you can just type their names. 
+
+On top of simple calculations, R has several built-in functions. To call these built-in functions, use the following syntax of the function name followed by its parameters enclosed in parentheses:
+
+`<function name>(<parameter 1>, <parameter 2>, etc...)`
+
+For example, R can create graphs using the `curve()` function below. Take a look at the code below. What is the function name? What are its parameters?
+
+```curve(equation, from= <lower x limit>, to= <upper x limit>, n= <number of evenly spaced points in domain>, xlab= <x axis labels>, ylab= <y axis labels>, col= <color of graph>```
+
+`curve()` accepts many parameters. The first parameter you enter is your equation. When entering your equation, make sure not to include the y= portion. After that you set the `to=` and `from=` parameters, which correspond to the domain minimum and maximum values. After that you set an n value parameter that determines the number of evenly spaced points that will be graphed between your domain values. The next parameters, `xlab=` and `ylab=`, determine the labels of your graph’s axes. You can further add `col=` to change the graph color. For a list of colors and palettes programmed into R, click [here](http://www.sthda.com/english/wiki/colors-in-r)
+
+Look at the following code and predict what kind of graph you will see:
+
+```
+curve(sin, -2*pi, 2*pi, col="blue")
+```
+
+Run the code. How close was your prediction? Notice that even though you didn’t set `xlab` and `ylab` parameters, the graph still labeled the x-axis as “x” and the y-axis as “sin(x)”. `curve()` has defaults for most of its parameters. In this case, it automatically set the x-axis label to ‘x’, the default variable name, and it set the y-axis label to the equation, sin(x). However, most of the time you will find that it is still helpful to set your own parameters. For example, if you just run `curve(sin)`, the resulting graph has such a narrow range that it almost looks like a straight line. So, you would need to set a domain and range so that you can get a better snapshot of the graph.
+
+## Functions in R
+
+Before you start writing any script, there are a few useful notes to be aware of.
+
+Whenever you execute a function that is going to give you a number or data set that you are going to want to reference later, assign it to an object using the format below:
+
+`<object name> <- <function>`
+
+You can assign variables using the same format:
+
+`<object name> <- <values to be assigned>`
+
+Assign the string “Hello” to a string object called word1, and assign the string “World” to a string object called word2:
+
+```
+word1 <- “Hello”
+word2 <- “World”
+```
+Now, use a built-in function called `paste()` to concatenate, or join, the two strings. Assign this concatenation to a string object called phrase. Take a look at the code below. What are its parameters?
+
+```
+phrase <- paste(word1, word2, sep = " ")
+```
+In this line, we set three parameters of `paste()`: the first string object to be concatenated, the second string object to be concatenated, and a parameter called `sep` or ‘separator’ which inserts a space in between the two. Let’s call another built-in function called `print()` on this new phrase object:
+
+```
+print(phrase)
+```
+You should also know that if you need to execute a function inside of another function, you have two options. The first is to “nest” the functions by putting your function inside of the other function’s parentheses. Run the following:
+
+```
+round(sqrt(10), 3)
+```
+Here, we nested two built-in functions: `round()` and `sqrt()`. You can probably guess what they both do. `round()` rounds a number to a specific amount of decimal places, in this case 3, and `sqrt()` calculates the square root. So in this code, the computer first calculates the square root of 10, then rounds that result to 3 decimal places. If you ever come across a built-in function you don’t know, you can look it up in the R Documentation. Note that you don’t need to include the parenthesis:
+
+`?<function name>`
+
+Try looking up either `round()` or `sqrt()` in the R Documentation. What does it tell you?
+
+```
+?round
+?sqrt
+```
+You can also “pipe” functions using something called the pipe operator:
+
+`%>%`
+
+The pipe operator gets the output of one statement and makes it the input for the next statement. You can think of it like the word “then”. Try reading the following code out loud:
+
+```10 %>% sqrt %>% round(3)```
+
+This line of code says: “Start with 10, then calculate the square root, then round to 3 decimal places.”
+
+With those functions in mind, let’s look at some data. 
+
+# Data analysis with R
+
+The code below will clear R’s brain or workspace of any stored information left over from previous coding sessions. It’s a good idea to put this at the beginning of all your scripts. 
+
+```rm(list = ls())```
+
+Run it to clear the workspace of the word1, word2, and phrase objects we created earlier.
+
+## Importing data
+
+The first step toward manipulating data in RStudio is importing your dataset. In this tutorial, we'll start by using data about 14 different attributes relating to heart disease which you can download [here](https://www.kaggle.com/ronitf/heart-disease-uci). Click the Download button next to the blue New Notebook button near the top of the page. This file will download as a zipped file, so make sure to extract it and save the file to your Desktop or another easily-accessible place. 
+
+Use the functions below to import the data.
+
+`file.choose()`
+`read.csv()`
+
+First, import data from the heart.csv file. The `file.choose()` function opens a window for you to navigate to, and select, the data you want to import. You do not need to put anything into the parenthesis of this function for it to work. Once you find and select the data file you want to upload, R will generate the path and file name for you. Copy everything between the quotation marks, being sure to include the marks themselves, and paste it into the parenthesis of the `read.csv()` function. Running that function loads your data into R. You want to assign your `read.csv()` function to an object using “<-” so that it’s easier to use in the rest of your script. Assign your `read.csv()` function to an object called heart:
+
+```heart <- read.csv(“<file path>”)```
+
+You will see a new Data entry in your “Environment” window in the upper right corner.
+
+## Exploring data
+
+The below functions will show more information about the newly imported data. Start by running them on `heart`.
+
+```
+names(heart)
+head(heart)
+tail(heart)
+dim(heart)
+str(heart)
+```
+
+The `names()` function will show you what each column is labeled. Here's a brief description of each column name and its details:
+
+* age: age in years
+* sex: 1 = male, 0 = female
+* cp: chest pain type (4 values from 0 to 3)
+* trestbps: resting blood pressure (in mm Hg on admission to the hospital)
+* chol: serum cholesterol in mg/dl
+* fbs: fasting blood sugar >120 mg/dl (1 = true, 0 = false)
+* restecg: resting electrocardiographic results
+* thalach: maximum heart rate achieved
+* exang: exercise induced angina (1 = yes, 0 = no)
+* oldpeak: ST depression induced by exercise relative to rest
+* slope: slope of the peak exercise ST segment
+* ca: number of major vessels (0-3) colored by flouroscopy
+* thal: 3 = normal, 6 = fixed defect, 7 = reversible defect
+* target: has heart disease = 1, doesn't have heart disease = 0
+
+`head()` and `tail()` will give you the first and last six rows of your dataset respectively. Notice that R will automatically wrap the columns to fit into your window. `dim()`, short for dimensions, will tell you the number of rows and columns in the dataset. This dataset has 303 observations, or rows, and 14 variables, or columns. `str()` will give you several components of your dataset, including the number of observations (rows), the number of variables (columns), and the class of your values (integer, character, etc.).
+
+## Manipulating data
+
+Before getting started, we're going to make the data more usable. The data contains a lot of categorical variables- sex, cp, fbs, restecg, exang, slope, cs, thal, and target. R has a specific data structure called factors that makes working with categorical data much easier. Running ```str(heart)``` showed that these categorical variables are currently represented by integers, so we're going to convert them all to factors. First, create a copy of heart called heart2. Then, use ```mutate()``` to convert the data to factors. 
+
+```{r}
+heart2 <- heart %>% 
+  mutate(sex = if_else(sex == 1, "Male", "Female"),
+         fbs = if_else(fbs == 1, ">120", "<=120"),
+         exang = if_else(exang == 1, "Yes" ,"No"),
+         cp = if_else(cp == 1, "Anginal",
+                      if_else(cp == 2, "Non-anginal pain", "Asymptomatic")),
+         restecg = if_else(restecg == 0, "Normal",
+                           if_else(restecg == 1, "Abnormality", "Probable or definite")),
+         slope = as.factor(slope),
+         ca = as.factor(ca),
+         thal = as.factor(thal),
+         target = if_else(target == 1, "Yes", "No")
+         ) %>% 
+  mutate_if(is.character, as.factor)
+```
+
+# Packages in R
+
+Packages are collections of specific functions in a well defined format. They make R very simple to use, and can be easily downloaded into RStudio. To download a package, click on the “Packages” tab in the lower right hand pane of RStudio. Then click “install.” A window will appear with a space for you to type the package name. Begin typing in the name of whichever package you need, and R will auto fill with available packages. Once your package is located, and selected, you can click install.
+
+Installing a package will not let you use it immediately. To employ the package, you must run the library function below every time you open your project. 
+
+`library(<package name>)`
+
+Running this function applies the desired package to the entirety of your script. It is best to open whatever packages will be necessary at the beginning of your scripts. 
+
+## Dplyr
+
+Now we will go over some of the basics of the dplyr package. To use dplyr you will also need to install Rtools, a set of software that assists with building packages. Install Rtools by running the following in your Console window:
+
+```
+install.Rtools(choose_version = TRUE, check = FALSE, GUI = TRUE,
+  page_with_download_url = "https://cran.r-project.org/bin/windows/Rtools/",
+  ...)
+```
+
+Then, install and use dplyr by following the procedure explained above. Don’t forget to run ```library(dplyr)```.
+
+Dplyr is a package that aids you in data analysis and manipulation. We will go over some of its features, but for more information on what dplyr can do, you can read this [cheat sheet](https://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf). 
+
+Some of the best tools for data manipulation in dplyr are the `group_by()` and `summarize()` functions. To use `group_by`, first enter the data set, and what variable you want the data grouped by. This will sort the data by whatever variable you identified.
+
+`group_by(<dataset>, <variable name>)`
+
+You can go further with your sorting by using the summarize feature in addition to grouping. You will have to either nest your group_by data set inside of the summarize function, or you can use the pipe function (```%>%```).
+
+The `summarize()` function can calculate totals, or statistical figures from your raw or sorted data. Below is the format for summarizing a grouped data set. 
+
+`summarize(<data set*>, <name of your desired value> = <function of one of the original variables>)`
+
+*This is where you would put your grouped data. You can put the full `group_by()` function here, or save your group_by function to an object that you enter here.
+
+This function can be confusing, so to add some clarity we will apply it to our heart data. We want to group the data by sex, and then find the mean resting blood pressure for each sex:
+
+```{r}
+heart2 %>%
+group_by(sex) %>%
+summarize(mean_bp = mean(trestbps))
+```
+Here, we sort the data by sex, then calculate the mean of those groups from the values in the “trestbps” column, which logs the resting blood pressure. This code is an example of both piping and nesting functions. In the first two lines, we use the piping operator %>% to say “Start with the patient dataset, then group by age”. In the last line, we nest `mean()` as a parameter of `summarize()`.
+
+## GGplot2
+
+To graph our data, we will install another package called ggplot2. Install and run ggplot2 by inputting the following in your Console window: 
+
+```
+install.packages("ggplot2")
+library(ggplot2)
+```
+
+Below is the base function of graph generation in ggplot2. In this function you identify the data set as well as what variables will be used for your axes. 
+
+`ggplot(data = <dataset name>, aes(x = <x axis variable>, y = <y axis variable>))`
++
+`geom_<chart type>`
++
+`additional modifications`
+
+You follow the above base line of script with whichever type of plot you want to make. Below are the functions you can use to fill in <chart type> and create specific types of plots. 
+
+* `geom_point()` will make a scatter plot
+  + You can add `alpha = x` into the parenthesis to determine the transparency of your data points
+  + You can also add `color =` to alter the color of your points. You can enter a color name in quotations to make all of the data points that color, or you can enter a variable to it and R will color code the points by subcategories inside that variable. 
+  + Size of the points can be changed with the parameter `size= 
+  
+* `geom_boxplot()` will make a box plot 
+  + You can add `geom_jitter()` to layer the individual data points onto the boxplot. Use the `alpha =` or `color =` explained in the above section to alter the points transparency and color in the box plot. 
+  
+* `geom_bar()` will make a bar graph
+  + In the parenthesis, `putting stat = "identity"` will tell R not to calculate anything from the data, and `position = "dodge"` will put sorted groups side by side as opposed to stacked.
+  
+* `geom_line()` will make line trends or other linear style graphs.
+  + You can add the `color =` parameter to `aes()` in the ggplot line to color code the subcategories of a variable
+  + You can alternatively add `group =` to subcategorize without color. 
+  + You can add `facet_wrap(~ variable)` to your linear graph to create side by side graphs where each graph shows a subcategory of whatever variable you selected. 
+  
+* `facet_grid(variable 1 ~ variable 2)` can also be added to the graph to perform the same function as `facet_wrap`, but with multiple variables. It will leave you with a grid of graphs sorted according to the two chosen variables.
+
+### Scatter plot
+
+Purpose: relationship between numerical values
+
+Question: What is the relationship between age and resting blood pressure?
+
+This graph has a trend line calculated using the `lm` method, which creates a linear fit. You can learn more about the different methods of calculating trend lines in the See also and Example sections of [this page](https://ggplot2.tidyverse.org/reference/geom_smooth.html).
+
+```{r}
+ggplot(heart2, aes(x=age, y=trestbps)) + 
+  geom_point() +
+  geom_smooth(method = "lm") + # add trend line
+  xlab("Age") +
+  ylab("Resting BP") +
+  ggtitle("Age and Resting Blood Pressure") 
+```
+
+There is a positive correlation between age and resting BP. The blue line represents the line of best fit, and the gray margins around the line represent the 95% confidence interval.
+
+### Bubble plot
+
+Purpose: represent frequency of categories
+
+Question: How many people experience chest pain?
+
+```{r}
+h <- heart2 %>% # create a copy of heart called h
+  group_by(cp) %>% # group h by chest pain categories
+  summarize(n = n()) # get counts for each category
+
+ggplot(h, aes(x=cp, y=n, size = n)) +
+    geom_point() +
+    scale_size(range = c(5, 20), name=("count")) +
+    xlab("Chest pain type") +
+    ylab("Count") +
+    ggtitle("Chest pain frequency") 
+
+```
+
+About 150 people are asymptomatic and don't experience chest pain. About 75 people experience pain that isn't due to angina, and about 50 people experience pain due to angina. 
+
+### Bar chart
+
+Purpose: quantitative representation of values
+
+Question: What is the distribution of ages in this data?
+
+```{r}
+h <- heart2 %>%
+  group_by(age) %>%
+  summarize(n = n())
+ggplot(h, aes(x=age, y=n, size = n)) +
+    geom_bar(stat="identity", show.legend = FALSE) +
+    xlab("Age") +
+    ylab("Count") +
+    ggtitle("Age distribution") 
+
+```
+
+Most people represented in this data are middle-aged.
+
+### Histogram
+
+Purpose: quantitative representation of values
+
+Question: What is the distribution of maximum heart rates?
+
+```{r}
+ggplot(data = heart2, aes(x = thalach)) +
+  geom_histogram() +
+    xlab("Maximum heart rate") +
+    ylab("Count") +
+    ggtitle("Maximum heart rates") 
+
+
+```
+
+The most common maximum heart rates are between 150 and 175 bpm.
+
+### Density curve
+
+Question: What is the distribution of cholesterol levels?
+
+```{r}
+ggplot(data = heart2, aes(x = chol)) +
+  geom_density() +
+    xlab("Cholesterol level") +
+    ylab("Count") +
+    ggtitle("Cholesterol levels") 
+
+```
+
+Conclusion: the most frequently occurring cholesterol levels are between 215 and 250.
+
+### Box plot
+
+Purpose: distribution of a numerical variable
+
+Question: What is the distribution of blood pressure measures across chest pain types?
+
+```{r}
+heart2 %>%
+  ggplot(aes(x=sex,y=trestbps)) +
+  geom_boxplot() +
+  xlab("Sex") +
+  ylab("BP") +
+  facet_grid(~cp)
+```
+
+## Correlation heatmap wtih corrplot package
+
+Datasets often have many different variables, and when first exploring a dataset it can be hard to tell which variables have correlations with each other. The corrplot package lets us create graphics of correlation matrices, which show correlation coefficients between variables. By looking at these graphics, we can easily notice patterns in the data. We will use the corrplot package, so make sure you run the following:
+
+```
+install.packages("corrplot")
+library(corrplot)
+```
+
+cor() is a function that takes a Data object as a parameter and calculates the correlation coefficients between each variable. Correlation coefficients range from -1 to 1. Since correlations can be either positive or negative, coefficients with absolute values closer to 1 indicate a higher correlation.
+
+```{r output="hide"}
+cor_heart <- cor(heart)
+cor_heart
+
+corrplot(cor_heart, tl.col= "black", method = "color", type="upper")
+```
+
+Darker colors indicate a stronger correlation. For example, slope and oldpeak are highly correlated but fbs and chol are not.
+
+# Further analysis
+
+## Principal component analysis (PCA)
+
+### What is PCA?
+
+You've probably had a lot of experience measuring data on a x-y graph. The x- and y-axis are two different dimensions, that you can measure the data on. They represent the x- and y-variables. You might even have seen a 3D graph that shows the relationship between x- y-, and z-variables. But what do you do when there are more variables? For example, the heart dataset we're working with right now has 14 variables- age, sex, heart, trestbps, etc. How do we measure and visualize this data? Should we create some sort of graph with 14 different axes- a 14-dimensional graph?? Luckily, we can simplify data by only analyzing among a few dimensions in a process called dimensionality reduction. 
+
+So, how do we tell which dimensions we should analyze along? We want to pick out the dimensions that capture the most data, and PCA, or principal component analysis, is one method that can help us do that. 
+
+> Tip: you can think of "component" and "dimension" as synonyms. So, any time you see "principle component" or "principle component analysis" you can read those as "principle dimension" and "principle dimension analysis".
+
+Principle components represent the dimensions where there's the most variance, and the data is more spread out. A higher variance indicates that the dimension captures more of the data, so if you only analyze the components with the highest variances, you can still capture a lot of the data's underlying pattern. 
+But why don't we just analyze all the components? That way we can capture all of the data, right?? Let's take a look at the graph below.
+
+```{r, echo=FALSE}
+curve(log10(5*x+1), from= 0, to= 15, xlab= "PCs analyzed", ylab= "% Data represented", xaxt="n", yaxt="n")
+```
+
+This logarithmic curve is an approximate representation of the relationship between PCs analyzed and % Data represented. You can see that after a certain point, the slope flattens out and even if you analyze more PCs, you're not really increasing the % Data represented by much. Analyzing more PCs takes more computing power, and after a certain point it might not be worth it to use all that power for only a small increase in % Data analyzed. This idea is what we call diminishing returns- the benefits gained (% data analyzed) aren't high enough to justify investing all that computing power.
+
+TL;DR: PCA is one way to perform dimensionality reduction, which simplifies data by identifying which dimensions most accurately represent it. 
+
+### Running PCA
+
+For this process, we need to install some more packages: FactoMineR and factoextra. We're also going to use a function called `prcomp` that takes a Data object as its parameter, performs PCA on that data, and returns the results.
+
+```
+# install packages 
+install.packages("FactoMineR")
+install.packages("factoextra")
+
+# load libraries
+library(FactoMineR)
+library(factoextra)
+```
+```{r}
+# performing PCA
+pca <- prcomp(heart, scale = TRUE) 
+```
+
+Now that we've run PCA on our data, we'll use some different methods to help us interpret and visualize the results.
+
+### Interpretation and visualization
+
+#### Eigenvalues
+
+We can compare the amount of variance each dimension, or principal component, has using a value called the eigenvalue. Eigenvalues are high for the first PCs and lower for the next PCs, so the first PCs represent dimensions with the largest amount of variance and they're the best at capturing the data. 
+
+Using the ```get_eigenvalue()``` function of factoextra, we can extract the eigenvalues of the PCs:
+
+```{r}
+eig <- get_eigenvalue(pca)
+eig
+```
+Let's take a look at what all these columns mean.
+
+* eigenvalue: measure of how much variance each dimension captures. The sum of all the eigenvalues is always 10.
+* variance.percent: proportion of variance each dimension captures. For example, 23.581966/100 = 23.581966%, or about 23.5% of the variance is explained by the first dimension.
+* cumulative.variance.percent: sum of all the variance.percent values for previous rows. For example, 23.581966 + 11.229748 equals a cumulative.variance.percent value of 34.81171 in Dim.2 row.
+
+You can use eigenvalues to determine the number of PCs to analyze (Kaiser 1961:
+
+>
+ * An eigenvalue > 1 indicates that PCs account for more variance than accounted by one of the original variables in standardized data. This is commonly used as a cutoff point for which PCs are retained. This holds true only when the data are standardized.
+  * You can also limit the number of component to that number that accounts for a certain fraction of the total variance. For example, if you are satisfied with 70% of the total variance explained then use the number of components to achieve that.
+  
+There isn't really a standard way to decide how many PCs are enough to analyze the data, and it'll depend on the purpose of your analysis and your data set. Usually, we can just look at the first few PCs.
+
+#### Scree plot
+
+We can also use something called a scree plot to graphically determine the number of PCs to analyze. Scree plots display the dimensions from smallest to largest eigenvalue. Usually, the scree plot is a steep curve that quickly flattens out, and the tallest bars on the far left represent the components with the highest eigenvalues.
+
+
+```{r}
+fviz_eig(pca, addlabels = TRUE, ylim=c(0,30))
+```
+
+From this graph and our previous eigenvalue analysis, we know that graphing the data along dimensions 1 and 2 captures about 33.8% of the explained variances.
+
+#### Graph of individuals
+
+Now that we know we can capture 33.8% of the data along dimensions 1 and 2, let's graph it. Here, the data is color-coded by target value. Each dot represents one person. A target value of 0 indicates no heart disease while a value of 1 indicates that that person has some kind of heart disease. 
+
+```{r}
+fviz_pca_ind(pca,
+             geom.ind = "point", # show points only, without labels)
+             col.ind = heart2$target, # color by target value
+             palette = c("#00AFBB", "#E7B800"),
+             legend.title = "Heart disease"
+             )
+
+```
+
+We can see that this graph has two clusters- one cluster of people with heart disease and one cluster of people without.
+
+# References
+
+Beckerman, Andrew P., Childs, Dylan Z., Petchey, Owen L. (2017) Getting Started with R: An Introduction for Biologists. Oxford, England: Oxford University Press.
+
+Jolliffe IT, Cadima J. Principal component analysis: a review and recent developments. 2016;374(2065).
+
+Kaiser, Henry F. 1961. “A Note on Guttman’s Lower Bound for the Number of Common Factors.” British Journal of Statistical Psychology 14: 1–2.
+
+UCI machine learning repository: Heart disease data set. Uci.edu. https://archive.ics.uci.edu/ml/datasets/Heart+Disease
+

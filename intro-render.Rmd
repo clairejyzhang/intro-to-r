@@ -282,8 +282,8 @@ You follow the above base line of script with whichever type of plot you want to
 
 ```{r}
 table_province <- as.data.frame(table(patient$province))
-names(table_province) <- c("city", "count")
-ggplot(table_province, aes(reorder(city, +count),count))+
+names(table_province) <- c("province", "count")
+ggplot(table_province, aes(reorder(province, +count),count))+
   geom_bar(stat='identity')+
   coord_flip()+
   labs(title="patients per province",x="province",y="patients")+
@@ -308,14 +308,14 @@ ggplot(chart_status, aes(province, state))+
 ## What are the most common reasons people get infected? 
 
 ```{r, results="hide", fig.height=6.5}
+patient$infection_case[patient$infection_case==""] <- NA
 table_reason <- as.data.frame(table(patient$infection_case))
 names(table_reason) <- c("reason", "count")
-filter(table_reason, reason!="")
 table_reason <- arrange(table_reason, desc(count))
 table_reason <- slice(table_reason, 1:20)
 ggplot(table_reason, aes(reorder(reason,+count),count))+
-  geom_bar(stat = "identity")+
+  geom_bar(stat = "identity",show.legend = FALSE)+
   coord_flip()+
-  labs(title = "top 20 reasons for infection", y = "people infected", x = "reason/location of infection")+
+  labs(title = "reasons for infection", y = "people infected", x = "reason/location")+
   geom_text(aes(label = count, y = count+75))
 ```
