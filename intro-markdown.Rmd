@@ -459,7 +459,6 @@ Darker colors indicate a stronger correlation. For example, slope and oldpeak ar
 
 ### What is PCA?
 
-<<<<<<< HEAD
 You've probably had a lot of experience measuring data on a x-y graph. The x- and y-axis are two different dimensions, that you can measure the data on. They represent the x- and y-variables. You might even have seen a 3D graph that shows the relationship between x- y-, and z-variables. But what do you do when there are more variables? For example, the heart dataset we're working with right now has 14 variables- age, sex, heart, trestbps, etc. How do we measure and visualize this data? Should we create some sort of graph with 14 different axes- a 14-dimensional graph?? Luckily, we can simplify data by only analyzing among a few dimensions in a process called dimensionality reduction. 
 
 So, how do we tell which dimensions we should analyze along? We want to pick out the dimensions that capture the most data, and PCA, or principal component analysis, is one method that can help us do that. 
@@ -476,11 +475,6 @@ curve(log10(5*x+1), from= 0, to= 15, xlab= "PCs analyzed", ylab= "% Data represe
 This logarithmic curve is an approximate representation of the relationship between PCs analyzed and % Data represented. You can see that after a certain point, the slope flattens out and even if you analyze more PCs, you're not really increasing the % Data represented by much. Analyzing more PCs takes more computing power, and after a certain point it might not be worth it to use all that power for only a small increase in % Data analyzed. This idea is what we call diminishing returns- the benefits gained (% data analyzed) aren't high enough to justify investing all that computing power.
 
 TL;DR: PCA is one way to perform dimensionality reduction, which simplifies data by identifying which dimensions most accurately represent it. 
-=======
-Before, you've probably had a lot of experience measuring data on a x-y axis. The x- and y-axis are two different directions, or dimensions, that you can measure the data on. But a lot of the time, data has an additional underlying structure. Principal components are this structure. They're the directions where there's the most variance, and the data is more spread out. A higher variance indicates that that the component, or direction, captures more of the data, so if you only analyze the components with the highest variances, you can capture the data pretty accurately. The components with the highest variances are called principal components, and PCA helps us find them. The process of using PCA to simplify data is called dimension reduction.
-
-Let's use the heart disease dataset to help explain PCA. It has 14 variables, or dimensions, right now. Although 14 may not seem like a very high number, that's a lot of information to work with considering that there are also 303 patients. By identifying the principal components, we can simplify the data down from 14 dimensions and make it easier to work with. 
->>>>>>> b7d72187186148c8f16ac49bf506728a544b4333
 
 ### Running PCA
 
@@ -500,7 +494,6 @@ library(factoextra)
 pca <- prcomp(heart, scale = TRUE) 
 ```
 
-<<<<<<< HEAD
 Now that we've run PCA on our data, we'll use some different methods to help us interpret and visualize the results.
 
 ### Interpretation and visualization
@@ -551,26 +544,6 @@ fviz_pca_ind(pca,
              palette = c("#00AFBB", "#E7B800"),
              legend.title = "Heart disease"
              )
-=======
-### Visualizing results
-
-Now that we've run PCA on our data, we'll use some different plots to help us visualize the results.
-
-Scree plots display how much variation each component captures. Usually, the scree plot is a steep curve that quickly flattens out, and the tallest bars on the far left represent the principal components.
-
-
-```{r}
-screeplot(pca, xlab="Components")
-fviz_screeplot(pca)
-```
-
-These are two slightly different methods we can use to visualize PCA results. The first graph shows the variances for each component and the second graph shows the percentage of explained variances for each dimension (remember, dimension is another word for component). In any case, they both show that there are two PCs that capture the most variance. 
-
-Now that we know we can accurately capture the data with two PCs, let's graph it along those PCs. Here, the data is color-coded by target value. Each dot represents one person. A target value of 0 indicates no heart disease while a value of 1 indicates that that person has some kind of heart disease. 
-
-```{r}
-autoplot(pca, data = heart, colour = 'target')
->>>>>>> b7d72187186148c8f16ac49bf506728a544b4333
 
 ```
 
@@ -582,10 +555,6 @@ Beckerman, Andrew P., Childs, Dylan Z., Petchey, Owen L. (2017) Getting Started 
 
 Jolliffe IT, Cadima J. Principal component analysis: a review and recent developments. 2016;374(2065).
 
-<<<<<<< HEAD
 Kaiser, Henry F. 1961. “A Note on Guttman’s Lower Bound for the Number of Common Factors.” British Journal of Statistical Psychology 14: 1–2.
 
-=======
->>>>>>> b7d72187186148c8f16ac49bf506728a544b4333
 UCI machine learning repository: Heart disease data set. Uci.edu. https://archive.ics.uci.edu/ml/datasets/Heart+Disease
-
