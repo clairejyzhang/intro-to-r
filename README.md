@@ -1,3 +1,3 @@
-# [Intro to R tutorial link](https://czhang08.github.io/intro-to-r/)
+# [Intro to R tutorial](https://czhang08.github.io/intro-to-r/)
 
 
