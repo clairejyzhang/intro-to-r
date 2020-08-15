@@ -223,7 +223,10 @@ The `names()` function will show you what each column is labeled. Here's a brief
 
 ## Manipulating data
 
-Before getting started, we're going to make the data more usable. The data contains a lot of categorical variables- sex, cp, fbs, restecg, exang, slope, cs, thal, and target. R has a specific data structure called factors that makes working with categorical data much easier. Running ```str(heart)``` showed that these categorical variables are currently represented by integers, so we're going to convert them all to factors. First, create a copy of heart called heart2. Then, use ```mutate()``` to convert the data to factors. 
+Before getting started, we're going to make the data more usable. The data contains a lot of categorical variables- sex, cp, fbs, restecg, exang, slope, cs, thal, and target. R has a specific data structure called factors that makes working with categorical data much easier. Running ```str(heart)``` showed that these categorical variables are currently represented by integers, so we're going to convert them all to factors. Each factor contains multiple levels, which will correspond with the integer values. For example, right now the sex column contains integer values of 0 or 1. We'll convert it to a column containing factors with two different levels- 1 and 2 (factor levels have to be greater than 0 so we'll add 1 to the integer values 0 and 1 to make the factor levels of 1 and 2). Level 1 will correspond to males and level 2 will correspond to females. 
+
+
+First, create a copy of heart called heart2. Then, use ```mutate()``` to convert the data to factors. 
 
 ```{r}
 heart2 <- heart %>% 
@@ -463,18 +466,20 @@ You've probably had a lot of experience measuring data on a x-y graph. The x- an
 
 So, how do we tell which dimensions we should analyze along? We want to pick out the dimensions that capture the most data, and PCA, or principal component analysis, is one method that can help us do that. 
 
-> Tip: you can think of "component" and "dimension" as synonyms. So, any time you see "principle component" or "principle component analysis" you can read those as "principle dimension" and "principle dimension analysis".
+> Tip: you can think of "component" and "dimension" as synonyms. This So, any time you see "principle component" or "principle component analysis" you can read those as "principle dimension" and "principle dimension analysis".
 
-Principle components represent the dimensions where there's the most variance, and the data is more spread out. A higher variance indicates that the dimension captures more of the data, so if you only analyze the components with the highest variances, you can still capture a lot of the data's underlying pattern. 
-But why don't we just analyze all the components? That way we can capture all of the data, right?? Let's take a look at the graph below.
+Principle components represent the dimensions where there's the most variance, and the data is more spread out. A higher variance indicates that the dimension captures more of the data, so if you only analyze the dimensions with the highest variances, you can still capture a lot of the data's underlying pattern. We generally analyze dimensions by graphing them against each other on an x- y- graph, where the x-axis will be one dimension and the y- dimension is another. Let's say a dataset has 10 dimensions, and through PCA we determine that we can capture patterns in the data only by analyzing dimensions 1-3. We can cross-analyze these dimensions by graphing dimension 1 against dimension 2, dimension 2 against dimension 3, and dimension 1 against dimension 3. Each of these analyzes should reveal different patterns in the data.
+
+
+But why don't we just cross-analyze all the dimensions? That way we can capture all of the data's patterns, right?? Let's take a look at the graph below.
 
 ```{r, echo=FALSE}
 curve(log10(5*x+1), from= 0, to= 15, xlab= "PCs analyzed", ylab= "% Data represented", xaxt="n", yaxt="n")
 ```
 
-This logarithmic curve is an approximate representation of the relationship between PCs analyzed and % Data represented. You can see that after a certain point, the slope flattens out and even if you analyze more PCs, you're not really increasing the % Data represented by much. Analyzing more PCs takes more computing power, and after a certain point it might not be worth it to use all that power for only a small increase in % Data analyzed. This idea is what we call diminishing returns- the benefits gained (% data analyzed) aren't high enough to justify investing all that computing power.
+This logarithmic curve is an approximate representation of the relationship between PCs analyzed and % Data represented. You can see that after a certain point, the slope flattens out and even if you cross-analyze more PCs, you're not really increasing the % Data represented by much. Analyzing more PCs takes more computing power, and after a certain point it might not be worth it to use all that power for only a small increase in % Data analyzed. This idea is what we call diminishing returns- the benefits gained (% data analyzed) aren't high enough to justify investing all that computing power.
 
-TL;DR: PCA is one way to perform dimensionality reduction, which simplifies data by identifying which dimensions most accurately represent it. 
+TL;DR: PCA is one way to perform dimensionality reduction, which simplifies data by identifying some key dimensions that can accurately represent it. 
 
 ### Running PCA
 
@@ -496,9 +501,9 @@ pca <- prcomp(heart, scale = TRUE)
 
 Now that we've run PCA on our data, we'll use some different methods to help us interpret and visualize the results.
 
-### Interpretation and visualization
+## Interpretation and visualization
 
-#### Eigenvalues
+### Eigenvalues
 
 We can compare the amount of variance each dimension, or principal component, has using a value called the eigenvalue. Eigenvalues are high for the first PCs and lower for the next PCs, so the first PCs represent dimensions with the largest amount of variance and they're the best at capturing the data. 
 
@@ -522,9 +527,11 @@ You can use eigenvalues to determine the number of PCs to analyze (Kaiser 1961:
   
 There isn't really a standard way to decide how many PCs are enough to analyze the data, and it'll depend on the purpose of your analysis and your data set. Usually, we can just look at the first few PCs.
 
-#### Scree plot
+TL;DR: Eigenvalues are a measure of how much data a PC captures, which helps us determine the cutoff for which PCs we should analyze.
 
-We can also use something called a scree plot to graphically determine the number of PCs to analyze. Scree plots display the dimensions from smallest to largest eigenvalue. Usually, the scree plot is a steep curve that quickly flattens out, and the tallest bars on the far left represent the components with the highest eigenvalues.
+### Scree plot
+
+We can also use something called a scree plot to graphically determine the number of PCs to analyze. Scree plots display the dimensions from largest to smallest eigenvalue. Usually, the scree plot is a steep curve that quickly flattens out, and the tallest bars on the far left represent the components with the largest eigenvalues.
 
 
 ```{r}
@@ -533,21 +540,34 @@ fviz_eig(pca, addlabels = TRUE, ylim=c(0,30))
 
 From this graph and our previous eigenvalue analysis, we know that graphing the data along dimensions 1 and 2 captures about 33.8% of the explained variances.
 
-#### Graph of individuals
+### Graph of individuals
 
-Now that we know we can capture 33.8% of the data along dimensions 1 and 2, let's graph it. Here, the data is color-coded by target value. Each dot represents one person. A target value of 0 indicates no heart disease while a value of 1 indicates that that person has some kind of heart disease. 
+Now that we know we can capture 33.8% of the data variances along dimensions 1 and 2, let's graph it. Here, the data is color-coded by target value. Each dot represents one person. A target value of 0 indicates no heart disease while a value of 1 indicates that that person has some kind of heart disease. 
 
 ```{r}
 fviz_pca_ind(pca,
              geom.ind = "point", # show points only, without labels)
              col.ind = heart2$target, # color by target value
-             palette = c("#00AFBB", "#E7B800"),
+             palette = c("blue", "red"),
              legend.title = "Heart disease"
-             )
+             ) + theme_minimal()
 
 ```
 
-We can see that this graph has two clusters- one cluster of people with heart disease and one cluster of people without.
+This graph has two clusters- one cluster of people with heart disease and one cluster of people without.
+
+We can also add ellipses. This graph has ellipses representing a 95% confidence interval, so we expect that if more individuals are measured for this dataset, 95% of individuals will be within these ellipses.
+
+```{r}
+fviz_pca_ind(pca,
+             geom.ind = "point", # show points only, without labels)
+             col.ind = heart2$target, # color by target value
+             palette = c("blue", "red"),
+             legend.title = "Heart disease",
+             addEllipses=TRUE, ellipse.level=0.95) + 
+             theme_minimal()
+
+```
 
 # References
 
