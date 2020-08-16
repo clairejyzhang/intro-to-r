@@ -38,7 +38,7 @@ names(heart)[names(heart) == "ï..age"] <- "age"
 
 R is a programming language with strong statistical computing, data analysis, and graphic generation abilities. It’s completely free and can be downloaded [here](https://cloud.r-project.org/). Choose whichever download works for your device. Clicking on one of these links will start the download of R. 
 
-Congrats! Now you should have R installed onto your computer. However, most of the work you do with R should mainly be done from RStudio which can be downloaded [here](https://www.rstudio.com/products/rstudio/download/). The free version of RStudio will be sufficient for the material covered in this tutorial. 
+Congrats! `r emo::ji("tada")` Now you have R installed onto your computer. However, most of the work you do with R should mainly be done from RStudio which can be downloaded [here](https://www.rstudio.com/products/rstudio/download/). The free version of RStudio will be sufficient for the material covered in this tutorial. 
 Once you have both R and RStudio downloaded, you’re ready to begin writing code. You can start by opening RStudio. You don’t need to open R itself as RStudio will automatically be able to access it.  
 
 ## Becoming Familiar with RStudio
@@ -98,12 +98,11 @@ On top of simple calculations, R has several built-in functions. To call these b
 
 For example, R can create graphs using the `curve()` function below. Take a look at the code below. What is the function name? What are its parameters?
 
-```curve(equation, from= <lower x limit>, to= <upper x limit>, n= <number of evenly spaced points in domain>, 
-xlab= <x axis labels>, ylab= <y axis labels>, col= <color of graph>```
+```curve(equation, from= <lower x limit>, to= <upper x limit>, n= <number of x axis ticks>, xlab= <x axis labels>, ylab= <y axis labels>, col= <color>```
 
 `curve()` accepts many parameters. The first parameter you enter is your equation. When entering your equation, make sure not to include the y= portion. After that you set the `to=` and `from=` parameters, which correspond to the domain minimum and maximum values. After that you set an n value parameter that determines the number of evenly spaced points that will be graphed between your domain values. The next parameters, `xlab=` and `ylab=`, determine the labels of your graph’s axes. You can further add `col=` to change the graph color. For a list of colors and palettes programmed into R, click [here](http://www.sthda.com/english/wiki/colors-in-r).
 
-Look at the following code and predict what kind of graph you will see:
+Look at the following code and predict what kind of graph you will see `r emo::ji("thinking")`
 
 ```
 curve(sin, -2*pi, 2*pi, col="blue")
@@ -139,6 +138,7 @@ In this line, we set three parameters of `paste()`: the first string object to b
 ```
 print(phrase)
 ```
+
 You should also know that if you need to execute a function inside of another function, you have two options. The first is to “nest” the functions by putting your function inside of the other function’s parentheses. Run the following:
 
 ```
@@ -164,7 +164,7 @@ The pipe operator gets the output of one statement and makes it the input for th
 
 This line of code says: “Start with 10, then calculate the square root, then round to 3 decimal places.”
 
-With those functions in mind, let’s look at some data. 
+With those functions in mind, let’s look at some data `r emo::ji("star_struck")`
 
 # Data analysis 
 
@@ -183,7 +183,7 @@ Use the functions below to import the data.
 `file.choose()`
 `read.csv()`
 
-First, import data from the heart.csv file. The `file.choose()` function opens a window for you to navigate to, and select, the data you want to import. You do not need to put anything into the parenthesis of this function for it to work. Once you find and select the data file you want to upload, R will generate the path and file name for you. Copy everything between the quotation marks, being sure to include the marks themselves, and paste it into the parenthesis of the `read.csv()` function. Running that function loads your data into R. You want to assign your `read.csv()` function to an object using “<-” so that it’s easier to use in the rest of your script. Assign your `read.csv()` function to an object called heart:
+First, import data from the heart.csv file. The `file.choose()` function opens a window for you to navigate to, and select, the data you want to import. You don't need to put anything into the parenthesis of this function for it to work. Once you find and select the data file you want to upload, R will generate the path and file name for you. Copy everything between the quotation marks, being sure to include the marks themselves, and paste it into the parenthesis of the `read.csv()` function. Running that function loads your data into R. You want to assign your `read.csv()` function to an object using “<-” so that it’s easier to use in the rest of your script. Assign your `read.csv()` function to an object called heart:
 
 ```heart <- read.csv(“<file path>”)```
 
@@ -219,6 +219,8 @@ The `names()` function will show you what each column is labeled. Here's a brief
 * target: has heart disease = 1, doesn't have heart disease = 0
 
 `head()` and `tail()` will give you the first and last six rows of your dataset respectively. Notice that R will automatically wrap the columns to fit into your window. `dim()`, short for dimensions, will tell you the number of rows and columns in the dataset. This dataset has 303 observations, or rows, and 14 variables, or columns. `str()` will give you several components of your dataset, including the number of observations (rows), the number of variables (columns), and the class of your values (integer, character, etc.).
+
+Great work! Now that you have experience importing and exploring data, let's get into some manipulation `r emo::ji("sunglasses")`
 
 ## Manipulating data
 
@@ -276,7 +278,7 @@ You can go further with your sorting by using the summarize feature in addition 
 The `summarize()` function can calculate totals, or statistical figures from your raw or sorted data. Below is the format for summarizing a grouped data set. 
 `summarize(<data set*>, <name of your desired value> = <function of one of the original variables>)`
 
-*This is where you would put your grouped data. You can put the full `group_by()` function here, or save your group_by function to an object that you enter here.
+*This is where you would put your grouped data. You can put the full `group_by()` function here, or save `group_by()` to an object that you enter here.
 
 This function can be confusing, so to add some clarity we will apply it to our heart data. We want to group the data by sex, and then find the mean resting blood pressure for each sex:
 
@@ -286,7 +288,7 @@ group_by(sex) %>%
 summarize(mean_bp = mean(trestbps))
 ```
 
-Here, we sort the data by sex, then calculate the mean of those groups from the values in the “trestbps” column, which logs the resting blood pressure. This code is an example of both piping and nesting functions. In the first two lines, we use the piping operator %>% to say “Start with the patient dataset, then group by age”. In the last line, we nest `mean()` as a parameter of `summarize()`.
+Here, we sort the data by sex, then calculate the mean of those groups from the values in the “trestbps” column, which logs the resting blood pressure. This code is an example of both piping and nesting functions. In the first two lines, we use the piping operator %>% to say “Start with the heart2 dataset, then group by age”. In the last line, we nest `mean()` as a parameter of `summarize()`.
 
 ## GGplot2
 
@@ -454,6 +456,8 @@ corrplot(cor_heart, tl.col= "black", method = "color", type="upper")
 
 Darker colors indicate a stronger correlation. For example, slope and oldpeak are highly correlated but fbs and chol are not.
 
+Now that you've learned how to visualize data graphically, you're ready for some further analysis that will help you when dealing with large, complex datasets `r emo::ji("heart_eyes_cat")`
+
 # Further analysis
 
 ## Principal component analysis (PCA)
@@ -464,12 +468,11 @@ You've probably had a lot of experience measuring data on a x-y graph. The x- an
 
 So, how do we tell which dimensions we should analyze along? We want to pick out the dimensions that capture the most data, and PCA, or principal component analysis, is one method that can help us do that. 
 
-> Tip: you can think of "component" and "dimension" as synonyms. So, any time you see "principle component" or "principle component analysis" you can read those as "principle dimension" and "principle dimension analysis".
+> `r emo::ji("rotating_light")` Tip: you can think of "component" and "dimension" as synonyms. So, any time you see "principle component" or "principle component analysis" you can read those as "principle dimension" and "principle dimension analysis". 
 
 Principle components represent the dimensions where there's the most variance, and the data is more spread out. A higher variance indicates that the dimension captures more of the data, so if you only analyze the dimensions with the highest variances, you can still capture a lot of the data's underlying pattern. We generally analyze dimensions by graphing them against each other on an x- y- graph, where the x-axis will be one dimension and the y- dimension is another. Let's say a dataset has 10 dimensions, and through PCA we determine that we can capture patterns in the data only by analyzing dimensions 1-3. We can cross-analyze these dimensions by graphing dimension 1 against dimension 2, dimension 2 against dimension 3, and dimension 1 against dimension 3. Each of these analyzes should reveal different patterns in the data.
 
-
-But why don't we just cross-analyze all the dimensions? That way we can capture all of the data's patterns, right?? Let's take a look at the graph below.
+But why don't we just cross-analyze all the dimensions? That way we can capture all of the data's patterns, right?? To learn why we don't really want to do that, let's take a look at the graph below.
 
 ```{r, echo=FALSE}
 curve(log10(5*x+1), from= 0, to= 15, xlab= "PCs analyzed", ylab= "% Data represented", xaxt="n", yaxt="n")
@@ -497,7 +500,7 @@ library(factoextra)
 pca <- prcomp(heart, scale = TRUE) 
 ```
 
-Now that we've run PCA on our data, we'll use some different methods to help us interpret and visualize the results.
+After we've run PCA on our data, we'll use some different methods to help us interpret and visualize the results.
 
 ## Interpretation and visualization
 
@@ -567,7 +570,19 @@ fviz_pca_ind(pca,
 
 ```
 
-# References
+<br><br><br><br>
+
+You've reached the end of the tutorial!! I plan on adding more sections, so make sure to check back later
+
+`r emo::ji("hammer")` Coming soon `r emo::ji("hammer")`
+
+* Quality of representation
+* Contribution of variables to PCs
+* Biplots
+* Loadings plots
+* Application with RNA-seq data
+
+# References 
 
 1 Beckerman, Andrew P., Childs, Dylan Z., Petchey, Owen L. (2017) Getting Started with R: An Introduction for Biologists. Oxford, England: Oxford University Press.
 
