@@ -395,7 +395,7 @@ summary {
 <li><a href="#correlation-heatmap-with-corrplot-package"><span class="toc-section-number">4.3</span> Correlation heatmap with corrplot package</a></li>
 </ul></li>
 <li><a href="#further-analysis"><span class="toc-section-number">5</span> Further analysis</a><ul>
-<li><a href="#principal-component-analysis-pca"><span class="toc-section-number">5.1</span> Principal component analysis (PCA)</a><ul>
+<li><a href="#principle-component-analysis-pca"><span class="toc-section-number">5.1</span> Principle component analysis (PCA)</a><ul>
 <li><a href="#what-is-pca"><span class="toc-section-number">5.1.1</span> What is PCA?</a></li>
 <li><a href="#running-pca"><span class="toc-section-number">5.1.2</span> Running PCA</a></li>
 </ul></li>
@@ -766,12 +766,12 @@ cor_heart</code></pre>
 </div>
 <div id="further-analysis" class="section level1">
 <h1><span class="header-section-number">5</span> Further analysis</h1>
-<div id="principal-component-analysis-pca" class="section level2">
-<h2><span class="header-section-number">5.1</span> Principal component analysis (PCA)</h2>
+<div id="principle-component-analysis-pca" class="section level2">
+<h2><span class="header-section-number">5.1</span> Principle component analysis (PCA)</h2>
 <div id="what-is-pca" class="section level3">
 <h3><span class="header-section-number">5.1.1</span> What is PCA?</h3>
 <p>You’ve probably had a lot of experience measuring data on a x-y graph. The x- and y-axis are two different dimensions, that you can measure the data on. They represent the x- and y-variables. You might even have seen a 3D graph that shows the relationship between x- y-, and z-variables. But what do you do when there are more variables? For example, the heart dataset we’re working with right now has 14 variables- age, sex, heart, trestbps, etc. How do we measure and visualize this data? Should we create some sort of graph with 14 different axes- a 14-dimensional graph?? Luckily, we can simplify data by only analyzing among a few dimensions in a process called dimensionality reduction.</p>
-<p>So, how do we tell which dimensions we should analyze along? We want to pick out the dimensions that capture the most data, and PCA, or principal component analysis, is one method that can help us do that.</p>
+<p>So, how do we tell which dimensions we should analyze along? We want to pick out the dimensions that capture the most data, and PCA, or principle component analysis, is one method that can help us do that.</p>
 <blockquote>
 <p>🚨 Tip: you can think of “component” and “dimension” as synonyms. So, any time you see “principle component” or “principle component analysis” you can read those as “principle dimension” and “principle dimension analysis”.</p>
 </blockquote>
@@ -800,7 +800,7 @@ pca &lt;- prcomp(heart, scale = TRUE) </code></pre>
 <h2><span class="header-section-number">5.2</span> Interpretation and visualization</h2>
 <div id="eigenvalues" class="section level3">
 <h3><span class="header-section-number">5.2.1</span> Eigenvalues</h3>
-<p>We can compare the amount of variance each dimension, or principal component, has using a value called the eigenvalue. Eigenvalues are high for the first PCs and lower for the next PCs, so the first PCs represent dimensions with the largest amount of variance and they’re the best at capturing the data.</p>
+<p>We can compare the amount of variance each dimension, or principle component, has using a value called the eigenvalue. Eigenvalues are high for the first PCs and lower for the next PCs, so the first PCs represent dimensions with the largest amount of variance and they’re the best at capturing the data.</p>
 <p>Using the <code>get_eigenvalue()</code> function of factoextra, we can extract the eigenvalues of the PCs:</p>
 <pre class="r"><code>eig &lt;- get_eigenvalue(pca)
 eig</code></pre>
