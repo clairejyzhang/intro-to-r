@@ -460,13 +460,13 @@ Now that you've learned how to visualize data graphically, you're ready for some
 
 # Further analysis
 
-## Principal component analysis (PCA)
+## Principle component analysis (PCA)
 
 ### What is PCA?
 
 You've probably had a lot of experience measuring data on a x-y graph. The x- and y-axis are two different dimensions, that you can measure the data on. They represent the x- and y-variables. You might even have seen a 3D graph that shows the relationship between x- y-, and z-variables. But what do you do when there are more variables? For example, the heart dataset we're working with right now has 14 variables- age, sex, heart, trestbps, etc. How do we measure and visualize this data? Should we create some sort of graph with 14 different axes- a 14-dimensional graph?? Luckily, we can simplify data by only analyzing among a few dimensions in a process called dimensionality reduction. 
 
-So, how do we tell which dimensions we should analyze along? We want to pick out the dimensions that capture the most data, and PCA, or principal component analysis, is one method that can help us do that. 
+So, how do we tell which dimensions we should analyze along? We want to pick out the dimensions that capture the most data, and PCA, or principle component analysis, is one method that can help us do that. 
 
 > `r emo::ji("rotating_light")` Tip: you can think of "component" and "dimension" as synonyms. So, any time you see "principle component" or "principle component analysis" you can read those as "principle dimension" and "principle dimension analysis". 
 
@@ -506,7 +506,7 @@ After we've run PCA on our data, we'll use some different methods to help us int
 
 ### Eigenvalues
 
-We can compare the amount of variance each dimension, or principal component, has using a value called the eigenvalue. Eigenvalues are high for the first PCs and lower for the next PCs, so the first PCs represent dimensions with the largest amount of variance and they're the best at capturing the data. 
+We can compare the amount of variance each dimension, or principle component, has using a value called the eigenvalue. Eigenvalues are high for the first PCs and lower for the next PCs, so the first PCs represent dimensions with the largest amount of variance and they're the best at capturing the data. 
 
 Using the ```get_eigenvalue()``` function of factoextra, we can extract the eigenvalues of the PCs:
 
